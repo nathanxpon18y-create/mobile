@@ -1,73 +1,77 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Registro de Atendimentos</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Registro de Atendimentos</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container">
+    <div class="container">
 
-        <h1>Registro de Atendimentos</h1>
+        <h1>Registro de Atendimentos</h1>
 
-        <!-- FORMULÁRIO -->
-        <form class="formulario" onsubmit="salvarAtendimento(); return false;">
-            <input type="text" id="cliente" placeholder="Nome do cliente" required>
-            <input type="text" id="contrato" placeholder="Contrato (000/000)" required>
+        <!-- FORMULÁRIO -->
+        <form class="formulario" onsubmit="salvarAtendimento(); return false;">
+            <input type="text" id="cliente" placeholder="Nome do cliente" required>
+            <input type="text" id="contrato" placeholder="Contrato (000/000)" required>
 
-            <select id="tipo">
-                <option>Retido</option>
-                <option>Suporte</option>
-                <option>Venda</option>
-                <option>Cancelado</option>
-                <option>Transferida</option>
-                <option>Informações</option>
-                <option>Combo Multi</option>
-            </select>
+            <select id="tipo">
+                <option>Retido</option>
+                <option>Suporte</option>
+                <option>Venda</option>
+                <option>Cancelado</option>
+                <option>Transferida</option>
+                <option>Informações</option>
+                <option>Combo Multi</option>
+            </select>
 
-            <select id="status">
-                <option>Informações do contrato</option>
-                <option>Total</option>
-                 <option>Mudança de Pacote</option>
-                 <option>Mudança de Endereço</option>
-                <option>Downgrade</option>
-                  <option>Upgrade</option>
-                <option>Suspensão temporária </option>
-                <option>Cancelamento MDE</option>
-                <option>Agendamento de VT</option>
-                <option>Venda Controle/ Pós Pago</option>
-                <option>Transferida Supervisão</option>
-                <option>Transferida Muda</option>
-                <option>Ligar no 0800/*1052 </option>
-                
-            </select>
+            <select id="status">
+                <option>Informações do contrato</option>
+                <option>Total</option>
+                 <option>Mudança de Pacote</option>
+                 <option>Mudança de Endereço</option>
+                <option>Downgrade</option>
+                  <option>Upgrade</option>
+                <option>Suspensão temporária </option>
+                <option>Cancelamento MDE</option>
+                <option>Agendamento de VT</option>
+                <option>Venda Controle/ Pós Pago</option>
+                <option>Transferida Supervisão</option>
+                <option>Transferida Muda</option>
+                <option>Ligar no 0800/*1052 </option>
+                
+            </select>
 
-            <input type="text" id="obs" placeholder="Observação rápida">
-            <button type="submit">Salvar Atendimento</button>
-        </form>
+            <input type="text" id="obs" placeholder="Observação rápida">
+            <button type="submit">Salvar Atendimento</button>
+        </form>
 
-        <!-- ESTATÍSTICAS -->
-        <h2>Estatísticas</h2>
-        <div id="estatisticas" class="estatisticas">
-            <p>Total de Atendimentos: <span id="totalAtendimentos">0</span></p>
-            <p>Total de Cancelamentos: <span id="totalCancelamentos">0</span></p>
-            <p>Taxa de Cancelamento: <span id="taxaCancelamento">0%</span></p>
-        </div>
+        <!-- ESTATÍSTICAS -->
+        <h2>Estatísticas</h2>
+        <div id="estatisticas" class="estatisticas">
+            <p>Total de Atendimentos: <span id="totalAtendimentos">0</span></p>
+            <p>Total de Cancelamentos: <span id="totalCancelamentos">0</span></p>
+            <p>Taxa de Cancelamento: <span id="taxaCancelamento">0%</span></p>
+        </div>
 
-        <!-- BLOCO DE NOTAS -->
-        <h2>Bloco de Anotações</h2>
-        <div id="blocoNotas" class="bloco-notas"></div>
+        <!-- BLOCO DE NOTAS -->
+        <h2>Bloco de Anotações</h2>
+        <div id="blocoNotas" class="bloco-notas"></div>
 
-        <!-- RODAPÉ -->
-        <footer>
-            Desenvolvido por Nathan Rocha |
-            📞 <a href="tel:+5582993717863">(82) 99371-7863</a> |
-            📧 <a href="mailto:nathanxpon18y@gmail.com">nathanxpon18y@gmail.com</a>
-        </footer>
+        <!-- RODAPÉ -->
+        <footer>
+            Desenvolvido por Nathan Rocha |
+            📞 <a href="tel:+5582993717863">(82) 99371-7863</a> |
+            📧 <a href="mailto:nathanxpon18y@gmail.com">nathanxpon18y@gmail.com</a>
+        </footer>
 
-    </div>
+    </div>
 
-    <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
+
+
+
+
