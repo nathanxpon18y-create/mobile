@@ -1,68 +1,104 @@
-/* Estilos gerados dinamicamente para cada atendimento */
-.registro-bloco {
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 0.9rem;
-    border-left: 4px solid var(--accent-color);
+let totalAtendimentos = 0;
+let totalCancelamentos = 0;
+
+function salvarAtendimento() {
+    const agora = new Date();
+
+    const cliente = document.getElementById('cliente').value;
+    const contrato = document.getElementById('contrato').value;
+    const tipo = document.getElementById('tipo').value;
+    const status = document.getElementById('status').value;
+    const obs = document.getElementById('obs').value;
+
+    if (!cliente || !contrato) {
+        alert("Preencha os campos obrigatórios!");
+        return;
+    }
+
+    const data = agora.toLocaleDateString('pt-BR');
+    const hora = agora.toLocaleTimeString('pt-BR').slice(0,5);
+
+    totalAtendimentos++;
+
+    const nota = document.createElement('div');
+    nota.classList.add('registro-bloco');
+
+    // Cor por tipo
+    switch (tipo.toLowerCase()) {
+        case 'venda': nota.classList.add('tipo-venda'); break;
+        case 'suporte': nota.classList.add('tipo-suporte'); break;
+        case 'retido': nota.classList.add('tipo-retido'); break;
+        case 'cancelado': nota.classList.add('tipo-cancelado'); break;
+        case 'transferida': nota.classList.add('tipo-transferida'); break;
+    }
+
+    // Conteúdo do bloco de notas
+    nota.innerHTML = `
+        <span class="linha-completa atendimento-numero">
+            Atendimento #${totalAtendimentos}
+        </span>
+        <span><b>Cliente:</b> ${cliente}</span>
+        <span><b>Contrato:</b> ${contrato}</span>
+        <span><b>Data:</b> ${data}</span>
+        <span><b>Hora:</b> ${hora}</span>
+        <span><b>Tipo:</b> ${tipo}</span>
+        <span><b>Status:</b> ${status}</span>
+        <span class="linha-completa"><b>Obs:</b> ${obs}</span>
+    `;
+
+    // Botões de ação
+    const botoes = document.createElement('div');
+    botoes.classList.add('botao-acao');
+
+    const btnEditar = document.createElement('button');
+    btnEditar.textContent = 'Editar';
+    btnEditar.classList.add('editar');
+    btnEditar.onclick = () => {
+        document.getElementById('cliente').value = cliente;
+        document.getElementById('contrato').value = contrato;
+        document.getElementById('tipo').value = tipo;
+        document.getElementById('status').value = status;
+        document.getElementById('obs').value = obs;
+
+        totalAtendimentos--;
+        if (tipo.toLowerCase() === 'cancelado') totalCancelamentos--;
+        atualizarEstatisticas();
+
+        nota.remove();
+    };
+
+    const btnApagar = document.createElement('button');
+    btnApagar.textContent = 'Apagar';
+    btnApagar.classList.add('apagar');
+    btnApagar.onclick = () => {
+        totalAtendimentos--;
+        if (tipo.toLowerCase() === 'cancelado') totalCancelamentos--;
+        atualizarEstatisticas();
+
+        nota.remove();
+    };
+
+    botoes.appendChild(btnEditar);
+    botoes.appendChild(btnApagar);
+    nota.appendChild(botoes);
+
+    document.getElementById('blocoNotas').prepend(nota);
+
+    if (tipo.toLowerCase() === 'cancelado') totalCancelamentos++;
+
+    atualizarEstatisticas();
+
+    // Limpa formulário
+    document.querySelector('.formulario').reset();
 }
 
-.registro-bloco span {
-    color: var(--text-color);
-}
+function atualizarEstatisticas() {
+    document.getElementById('totalAtendimentos').textContent = totalAtendimentos;
+    document.getElementById('totalCancelamentos').textContent = totalCancelamentos;
 
-.registro-bloco b {
-    color: var(--text-muted);
-}
+    const taxa = totalAtendimentos > 0
+        ? ((totalCancelamentos / totalAtendimentos) * 100).toFixed(2)
+        : 0;
 
-.atendimento-numero {
-    font-weight: bold;
-    color: var(--accent-color);
-    font-size: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 5px;
-    margin-bottom: 5px;
-}
-
-/* Cores específicas por tipo de atendimento */
-.tipo-venda { border-left-color: #22c55e; }
-.tipo-suporte { border-left-color: #38bdf8; }
-.tipo-retido { border-left-color: #eab308; }
-.tipo-cancelado { border-left-color: #f43f5e; }
-.tipo-transferida { border-left-color: #a855f7; }
-
-/* Botões de Ação dentro do Bloco */
-.botao-acao {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.botao-acao button {
-    padding: 6px 14px;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.botao-acao button:hover {
-    opacity: 0.85;
-}
-
-.botao-acao button.editar {
-    background-color: #38bdf8;
-    color: #0f172a;
-}
-
-.botao-acao button.apagar {
-    background-color: #f43f5e;
-    color: #f8fafc;
+    document.getElementById('taxaCancelamento').textContent = taxa + '%';
 }
