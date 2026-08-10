@@ -1,104 +1,137 @@
-let totalAtendimentos = 0;
-let totalCancelamentos = 0;
-
-function salvarAtendimento() {
-    const agora = new Date();
-
-    const cliente = document.getElementById('cliente').value;
-    const contrato = document.getElementById('contrato').value;
-    const tipo = document.getElementById('tipo').value;
-    const status = document.getElementById('status').value;
-    const obs = document.getElementById('obs').value;
-
-    if (!cliente || !contrato) {
-        alert("Preencha os campos obrigatórios!");
-        return;
-    }
-
-    const data = agora.toLocaleDateString('pt-BR');
-    const hora = agora.toLocaleTimeString('pt-BR').slice(0,5);
-
-    totalAtendimentos++;
-
-    const nota = document.createElement('div');
-    nota.classList.add('registro-bloco');
-
-    // Cor por tipo
-    switch (tipo.toLowerCase()) {
-        case 'venda': nota.classList.add('tipo-venda'); break;
-        case 'suporte': nota.classList.add('tipo-suporte'); break;
-        case 'retido': nota.classList.add('tipo-retido'); break;
-        case 'cancelado': nota.classList.add('tipo-cancelado'); break;
-        case 'transferida': nota.classList.add('tipo-transferida'); break;
-    }
-
-    // Conteúdo do bloco de notas
-    nota.innerHTML = `
-        <span class="linha-completa atendimento-numero">
-            Atendimento #${totalAtendimentos}
-        </span>
-        <span><b>Cliente:</b> ${cliente}</span>
-        <span><b>Contrato:</b> ${contrato}</span>
-        <span><b>Data:</b> ${data}</span>
-        <span><b>Hora:</b> ${hora}</span>
-        <span><b>Tipo:</b> ${tipo}</span>
-        <span><b>Status:</b> ${status}</span>
-        <span class="linha-completa"><b>Obs:</b> ${obs}</span>
-    `;
-
-    // Botões de ação
-    const botoes = document.createElement('div');
-    botoes.classList.add('botao-acao');
-
-    const btnEditar = document.createElement('button');
-    btnEditar.textContent = 'Editar';
-    btnEditar.classList.add('editar');
-    btnEditar.onclick = () => {
-        document.getElementById('cliente').value = cliente;
-        document.getElementById('contrato').value = contrato;
-        document.getElementById('tipo').value = tipo;
-        document.getElementById('status').value = status;
-        document.getElementById('obs').value = obs;
-
-        totalAtendimentos--;
-        if (tipo.toLowerCase() === 'cancelado') totalCancelamentos--;
-        atualizarEstatisticas();
-
-        nota.remove();
-    };
-
-    const btnApagar = document.createElement('button');
-    btnApagar.textContent = 'Apagar';
-    btnApagar.classList.add('apagar');
-    btnApagar.onclick = () => {
-        totalAtendimentos--;
-        if (tipo.toLowerCase() === 'cancelado') totalCancelamentos--;
-        atualizarEstatisticas();
-
-        nota.remove();
-    };
-
-    botoes.appendChild(btnEditar);
-    botoes.appendChild(btnApagar);
-    nota.appendChild(botoes);
-
-    document.getElementById('blocoNotas').prepend(nota);
-
-    if (tipo.toLowerCase() === 'cancelado') totalCancelamentos++;
-
-    atualizarEstatisticas();
-
-    // Limpa formulário
-    document.querySelector('.formulario').reset();
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Permite rolar se o conteúdo for grande, mas centraliza no meio */
 }
 
-function atualizarEstatisticas() {
-    document.getElementById('totalAtendimentos').textContent = totalAtendimentos;
-    document.getElementById('totalCancelamentos').textContent = totalCancelamentos;
+.container {
+    width: 100%;
+    max-width: 550px;
+    padding: 20px;
+    margin: 20px auto; /* Garante que fique centralizado horizontalmente */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
 
-    const taxa = totalAtendimentos > 0
-        ? ((totalCancelamentos / totalAtendimentos) * 100).toFixed(2)
-        : 0;
+h1, h2 {
+    color: #1976d2;
+    text-align: center;
+    width: 100%;
+}
 
-    document.getElementById('taxaCancelamento').textContent = taxa + '%';
+.formulario {
+    background: #fff;
+    padding: 15px;
+    width: 100%;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
+.formulario input,
+.formulario select,
+.formulario button {
+    padding: 10px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.formulario button {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.estatisticas {
+    width: 100%;
+    margin: 20px 0;
+    background: #e3f2fd;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.bloco-notas {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.registro-bloco {
+    background: #fff;
+    margin-bottom: 10px;
+    padding: 12px;
+    border-left: 6px solid #1976d2;
+    border-radius: 6px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    font-size: 13px;
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+/* ocupa duas colunas */
+.linha-completa {
+    grid-column: span 2;
+}
+
+/* cores */
+.tipo-venda { border-left-color: #1976d2; }
+.tipo-suporte { border-left-color: #fbc02d; }
+.tipo-retido { border-left-color: #4CAF50; }
+.tipo-cancelado { border-left-color: #F44336; }
+.tipo-transferida { border-left-color: #E91E63; }
+
+.atendimento-numero {
+    font-weight: bold;
+    color: #000;
+}
+
+.botao-acao {
+    grid-column: span 2;
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+.botao-acao button {
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.botao-acao .editar {
+    background-color: #03a9f4;
+    color: #fff;
+}
+
+.botao-acao .apagar {
+    background-color: #F44336;
+    color: #fff;
+}
+
+footer {
+    margin-top: 30px;
+    font-size: 13px;
+    color: #555;
+    text-align: center;
+    width: 100%;
 }
