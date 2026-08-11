@@ -1,248 +1,38 @@
-/* Configurações Gerais */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background-color: #f4f6f8;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-}
-
-.container {
-    width: 100%;
-    max-width: 600px;
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-h1, h2 {
-    color: #1976d2;
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-h1 {
-    font-size: 1.5rem;
-}
-
-h2 {
-    font-size: 1.2rem;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 5px;
-    margin-top: 20px;
-}
-
-/* Formulário */
-.formulario {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 25px;
-}
-
-input, select {
-    background: #f9f9f9;
-    border: 1px solid #ccc;
-    color: #333;
-    padding: 10px 12px;
-    border-radius: 6px;
-    font-size: 0.95rem;
-}
-
-input:focus, select:focus {
-    outline: none;
-    border-color: #1976d2;
-}
-
-button[type="submit"] {
-    background-color: #1976d2;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-button[type="submit"]:hover {
-    background-color: #115293;
-}
-
-/* Estatísticas */
-.estatisticas {
-    background: #e3f2fd;
-    padding: 12px;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 0.95rem;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-/* Telinha de Atendimentos Salvos */
-#listaAtendimentos {
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 12px;
-    min-height: 100px;
-    max-height: 400px;
-    overflow-y: auto;
-    margin-bottom: 20px;
-}
-
-.sem-registros {
-    text-align: center;
-    color: #888;
-    font-size: 0.9rem;
-    padding: 30px 0;
-}
-
-/* Bloco de Anotações Livre */
-.bloco-notas {
-    background: #f9f9f9;
-    border: 1px solid #ccc;
-    min-height: 100px;
-    padding: 12px;
-    border-radius: 8px;
-    color: #333;
-    margin-bottom: 20px;
-    outline: none;
-    font-size: 0.95rem;
-    line-height: 1.4;
-}
-
-.bloco-notas:focus {
-    border-color: #1976d2;
-    background: #ffffff;
-}
-
-/* Blocos de Registros de Atendimento */
-.registro-bloco {
-    background: #fff;
-    margin-bottom: 12px;
-    padding: 12px;
-    border-left: 6px solid #1976d2;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    font-size: 13px;
-    width: 100%;
-    text-align: left;
-}
-
-.registro-bloco span {
-    color: #333;
-}
-
-.linha-completa {
-    grid-column: span 2;
-}
-
-.atendimento-numero {
-    font-weight: bold;
-    color: #1976d2;
-    font-size: 1rem;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 4px;
-    margin-bottom: 4px;
-}
-
-/* Cores específicas por tipo (Borda esquerda) */
-.tipo-venda { border-left-color: #1976d2; }
-.tipo-suporte { border-left-color: #fbc02d; }
-.tipo-retido { border-left-color: #4CAF50; }
-.tipo-cancelado { border-left-color: #F44336; }
-.tipo-transferida { border-left-color: #E91E63; }
-
-/* Botões de Ação dentro do Registro */
-.botao-acao {
-    grid-column: span 2;
-    display: flex;
-    gap: 10px;
-    margin-top: 5px;
-}
-
-.botao-acao button {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.85rem;
-}
-
-.botao-acao .editar {
-    background-color: #03a9f4;
-    color: #fff;
-}
-
-.botao-acao .apagar {
-    background-color: #F44336;
-    color: #fff;
-}
-
-.botao-acao button:hover {
-    opacity: 0.85;
-}
-
 /* Legenda de Cores */
-.legenda-container {
+.legenda-cores-container {
+    margin-top: 18px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin: 20px 0;
-    padding: 10px;
-    background: #e3f2fd;
-    border-radius: 8px;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.legenda-titulo-cores {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legenda-itens {
+    display: flex;
     flex-wrap: wrap;
+    gap: 12px;
 }
 
 .legenda-item {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.85rem;
-    color: #333;
+    font-size: 0.78rem;
+    color: var(--text-main);
 }
 
-.bola {
-    width: 10px;
-    height: 10px;
+.cor-bola {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     display: inline-block;
-}
-
-/* Rodapé */
-footer {
-    margin-top: 30px;
-    font-size: 13px;
-    color: #555;
-    text-align: center;
-    width: 100%;
-    border-top: 1px solid #e0e0e0;
-    padding-top: 15px;
-}
-
-footer a {
-    color: #1976d2;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
 }
