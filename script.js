@@ -1,15 +1,26 @@
-let totalAtendimentos = 0;
-let totalCancelamentos = 0;
-
-// Carrega os dados salvos e o bloco de notas ao iniciar a página
-document.addEventListener("DOMContentLoaded", () => {
-    carregarAtendimentosSalvos();
+document.addEventListener('DOMContentLoaded', () => {
+    carregarDados();
     carregarBlocoNotas();
+
+    // Evento de envio do formulário via classe
+    const form = document.querySelector('.formulario');
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            salvarAtendimento();
+        });
+    }
+
+    // Salva o bloco de notas automaticamente ao digitar
+    const blocoNotas = document.getElementById('blocoNotas');
+    if (blocoNotas) {
+        blocoNotas.addEventListener('input', () => {
+            localStorage.setItem('blocoNotasTexto', blocoNotas.innerHTML);
+        });
+    }
 });
 
 function salvarAtendimento() {
-    const agora = new Date();
-
     const cliente = document.getElementById('cliente').value.trim();
     const contrato = document.getElementById('contrato').value.trim();
     const tipo = document.getElementById('tipo').value;
@@ -17,132 +28,114 @@ function salvarAtendimento() {
     const obs = document.getElementById('obs').value.trim();
 
     if (!cliente || !contrato) {
-        alert("Preencha os campos obrigatórios (Cliente e Contrato)!");
+        alert('Por favor, preencha o nome do cliente e o contrato.');
         return;
     }
 
-    const data = agora.toLocaleDateString('pt-BR');
-    const hora = agora.toLocaleTimeString('pt-BR').slice(0, 5);
+    let atendimentos = JSON.parse(localStorage.getItem('atendimentos')) || [];
+    
+    // Verifica se o formulário está em modo de edição
+    const form = document.querySelector('.formulario');
+    const editIndex = form.dataset.editIndex;
 
-    const atendimento = {
-        id: Date.now(),
-        cliente,
-        contrato,
-        tipo,
-        status,
-        obs,
-        data,
-        hora
+    const novoAtendimento = { cliente, contrato, tipo, status, obs };
+
+    if (editIndex !== undefined && editIndex !== '') {
+        atendimentos[editIndex] = novoAtendimento;
+        delete form.dataset.editIndex;
+        form.querySelector('button[type="submit"]').innerText = 'Salvar Atendimento';
+    } else {
+        atendimentos.push(novoAtendimento);
+    }
+
+    localStorage.setItem('atendimentos', JSON.stringify(atendimentos));
+    
+    form.reset();
+    carregarDados();
+}
+
+function carregarDados() {
+    let atendimentos = JSON.parse(localStorage.getItem('atendimentos')) || [];
+    const lista = document.getElementById('listaAtendimentos');
+    lista.innerHTML = '';
+
+    let total = atendimentos.length;
+    let cancelados = atendimentos.filter(a => a.tipo === 'Cancelado').length;
+    let taxa = total > 0 ? ((cancelados / total) * 100).toFixed(2) : 0;
+
+    // Atualiza estatísticas na tela
+    document.getElementById('totalAtendimentos').innerText = total;
+    document.getElementById('totalCancelamentos').innerText = cancelados;
+    document.getElementById('taxaCancelamento').innerText = taxa + '%';
+
+    if (total === 0) {
+        lista.innerHTML = `<div class="sem-registros">Nenhum atendimento registrado ainda.</div>`;
+        return;
+    }
+
+    // Mapeia classes de cores para a bordinha lateral do card
+    const classesTipo = {
+        'Venda': 'tipo-venda',
+        'Suporte': 'tipo-suporte',
+        'Retido': 'tipo-retido',
+        'Cancelado': 'tipo-cancelado',
+        'Transferida': 'tipo-transferida',
+        'Combo Multi': 'tipo-venda',
+        'Informações': 'tipo-suporte'
     };
 
-    let atendimentos = JSON.parse(localStorage.getItem("listaAtendimentosStorage")) || [];
-    atendimentos.unshift(atendimento); 
-    localStorage.setItem("listaAtendimentosStorage", JSON.stringify(atendimentos));
+    atendimentos.forEach((a, index) => {
+        const classeBorda = classesTipo[a.tipo] || 'tipo-venda';
 
-    carregarAtendimentosSalvos();
-    document.querySelector('.formulario').reset();
-}
-
-function carregarAtendimentosSalvos() {
-    const container = document.getElementById('listaAtendimentos');
-    container.innerHTML = "";
-
-    let atendimentos = JSON.parse(localStorage.getItem("listaAtendimentosStorage")) || [];
-    
-    totalAtendimentos = atendimentos.length;
-    totalCancelamentos = atendimentos.filter(a => a.tipo.toLowerCase() === 'cancelado').length;
-
-    if (atendimentos.length === 0) {
-        container.innerHTML = `<div class="sem-registros">Nenhum atendimento salvo ainda.</div>`;
-        atualizarEstatisticas();
-        return;
-    }
-
-    atendimentos.forEach((atendimento, index) => {
-        const numeroExibicao = totalAtendimentos - index;
-        const nota = document.createElement('div');
-        nota.classList.add('registro-bloco');
-
-        switch (atendimento.tipo.toLowerCase()) {
-            case 'venda': nota.classList.add('tipo-venda'); break;
-            case 'suporte': nota.classList.add('tipo-suporte'); break;
-            case 'retido': nota.classList.add('tipo-retido'); break;
-            case 'cancelado': nota.classList.add('tipo-cancelado'); break;
-            case 'transferida': nota.classList.add('tipo-transferida'); break;
-        }
-
-        nota.innerHTML = `
-            <span class="linha-completa atendimento-numero">Atendimento #${numeroExibicao}</span>
-            <span><b>Cliente:</b> ${atendimento.cliente}</span>
-            <span><b>Contrato:</b> ${atendimento.contrato}</span>
-            <span><b>Data:</b> ${atendimento.data}</span>
-            <span><b>Hora:</b> ${atendimento.hora}</span>
-            <span><b>Tipo:</b> ${atendimento.tipo}</span>
-            <span><b>Status:</b> ${atendimento.status}</span>
-            <span class="linha-completa"><b>Obs:</b> ${atendimento.obs}</span>
+        lista.innerHTML += `
+            <div class="registro-bloco ${classeBorda}">
+                <div class="linha-completa atendimento-numero">Atendimento #${index + 1}</div>
+                <div><strong>Cliente:</strong> <span>${a.cliente}</span></div>
+                <div><strong>Contrato:</strong> <span>${a.contrato}</span></div>
+                <div><strong>Tipo:</strong> <span>${a.tipo}</span></div>
+                <div><strong>Status:</strong> <span>${a.status}</span></div>
+                ${a.obs ? `<div class="linha-completa"><strong>Obs:</strong> <span>${a.obs}</span></div>` : ''}
+                <div class="botao-acao">
+                    <button class="editar" type="button" onclick="editarAtendimento(${index})">Editar</button>
+                    <button class="apagar" type="button" onclick="apagarAtendimento(${index})">Apagar</button>
+                </div>
+            </div>
         `;
-
-        const botoes = document.createElement('div');
-        botoes.classList.add('botao-acao');
-
-        const btnEditar = document.createElement('button');
-        btnEditar.textContent = 'Editar';
-        btnEditar.classList.add('editar');
-        btnEditar.onclick = () => {
-            document.getElementById('cliente').value = atendimento.cliente;
-            document.getElementById('contrato').value = atendimento.contrato;
-            document.getElementById('tipo').value = atendimento.tipo;
-            document.getElementById('status').value = atendimento.status;
-            document.getElementById('obs').value = atendimento.obs;
-
-            removerAtendimento(atendimento.id);
-        };
-
-        const btnApagar = document.createElement('button');
-        btnApagar.textContent = 'Apagar';
-        btnApagar.classList.add('apagar');
-        btnApagar.onclick = () => {
-            removerAtendimento(atendimento.id);
-        };
-
-        botoes.appendChild(btnEditar);
-        botoes.appendChild(btnApagar);
-        nota.appendChild(botoes);
-
-        container.appendChild(nota);
     });
-
-    atualizarEstatisticas();
 }
 
-function removerAtendimento(id) {
-    let atendimentos = JSON.parse(localStorage.getItem("listaAtendimentosStorage")) || [];
-    atendimentos = atendimentos.filter(a => a.id !== id);
-    localStorage.setItem("listaAtendimentosStorage", JSON.stringify(atendimentos));
-    carregarAtendimentosSalvos();
+function apagarAtendimento(index) {
+    if (confirm('Deseja realmente apagar este atendimento?')) {
+        let atendimentos = JSON.parse(localStorage.getItem('atendimentos')) || [];
+        atendimentos.splice(index, 1);
+        localStorage.setItem('atendimentos', JSON.stringify(atendimentos));
+        carregarDados();
+    }
 }
 
-function atualizarEstatisticas() {
-    document.getElementById('totalAtendimentos').textContent = totalAtendimentos;
-    document.getElementById('totalCancelamentos').textContent = totalCancelamentos;
+function editarAtendimento(index) {
+    let atendimentos = JSON.parse(localStorage.getItem('atendimentos')) || [];
+    const a = atendimentos[index];
 
-    const taxa = totalAtendimentos > 0
-        ? ((totalCancelamentos / totalAtendimentos) * 100).toFixed(2)
-        : 0;
+    document.getElementById('cliente').value = a.cliente;
+    document.getElementById('contrato').value = a.contrato;
+    document.getElementById('tipo').value = a.tipo;
+    document.getElementById('status').value = a.status;
+    document.getElementById('obs').value = a.obs || '';
 
-    document.getElementById('taxaCancelamento').textContent = taxa + '%';
-}
-
-const campoBlocoNotas = document.getElementById("blocoNotas");
-if (campoBlocoNotas) {
-    campoBlocoNotas.addEventListener("input", () => {
-        localStorage.setItem("blocoNotasTexto", campoBlocoNotas.innerHTML);
-    });
+    const form = document.querySelector('.formulario');
+    form.dataset.editIndex = index;
+    form.querySelector('button[type="submit"]').innerText = 'Atualizar Atendimento';
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function carregarBlocoNotas() {
-    const notasSalvas = localStorage.getItem("blocoNotasTexto");
-    if (notasSalvas && campoBlocoNotas) {
-        campoBlocoNotas.innerHTML = notasSalvas;
+    const blocoNotas = document.getElementById('blocoNotas');
+    const textoSalvo = localStorage.getItem('blocoNotasTexto');
+    if (blocoNotas && textoSalvo) {
+        blocoNotas.innerHTML = textoSalvo;
     }
 }
+
+
