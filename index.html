@@ -4,78 +4,195 @@
     <meta charset="UTF-8">
     <title>Registro de Atendimentos</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Ícones do FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="dark-mode">
 
     <div class="container">
 
-        <h1>Registro de Atendimentos</h1>
+        <!-- CABEÇALHO -->
+        <header class="topo-cabecalho">
+            <div class="logo-titulo">
+                <i class="fa-solid fa-headset icon-logo"></i>
+                <h1>Registro de Atendimentos</h1>
+            </div>
+            <div class="acoes-topo">
+                <button class="btn-icone" id="btnAlternarTema" title="Alternar Tema" onclick="alternarTema()">
+                    <i class="fa-solid fa-moon" id="iconeTema"></i>
+                </button>
+                <button class="btn-exportar"><i class="fa-solid fa-download"></i> Exportar Relatório</button>
+            </div>
+        </header>
 
-        <!-- FORMULÁRIO -->
-        <form class="formulario" onsubmit="salvarAtendimento(); return false;">
-            <input type="text" id="cliente" placeholder="Nome do cliente">
-            <input type="text" id="contrato" placeholder="Contrato (000/000)">
+        <!-- GRID PRINCIPAL -->
+        <div class="painel-grid">
+            
+            <!-- COLUNA ESQUERDA: NOVO ATENDIMENTO -->
+            <div class="card-painel">
+                <div class="card-titulo">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <div>
+                        <h2>Novo Atendimento</h2>
+                        <p>Preencha os dados abaixo para registrar o atendimento.</p>
+                    </div>
+                </div>
 
-            <select id="tipo">
-                <option value="Retido">Retido</option>
-                <option value="Suporte">Suporte</option>
-                <option value="Venda">Venda</option>
-                <option value="Cancelado">Cancelado</option>
-                <option value="Transferida">Transferida</option>
-                <option value="Informações">Informações</option>
-                <option value="Combo Multi">Combo Multi</option>
-            </select>
+                <form class="formulario" onsubmit="salvarAtendimento(); return false;">
+                    <div class="grupo-input">
+                        <label>Nome do cliente</label>
+                        <div class="input-com-icone">
+                            <i class="fa-regular fa-user"></i>
+                            <input type="text" id="cliente" placeholder="Digite o nome do cliente" required>
+                        </div>
+                    </div>
 
-            <select id="status">
-                <option>Informações do contrato</option>
-                <option>Total</option>
-                <option>Mudança de Pacote</option>
-                <option>Mudança de Endereço</option>
-                <option>Downgrade</option>
-                <option>Upgrade</option>
-                <option>Suspensão temporária</option>
-                <option>Cancelamento MDE</option>
-                <option>Agendamento de VT</option>
-                <option>Venda Controle/ Pós Pago</option>
-                <option>Transferida Supervisão</option>
-                <option>Transferida Muda</option>
-                <option>Ligar no 0800/*1052</option>
-            </select>
+                    <div class="grupo-input">
+                        <label>Contrato (000/000)</label>
+                        <div class="input-com-icone">
+                            <i class="fa-regular fa-file-lines"></i>
+                            <input type="text" id="contrato" placeholder="Ex: 123/456" required>
+                        </div>
+                    </div>
 
-            <input type="text" id="obs" placeholder="Observação rápida">
-            <button type="submit">Salvar Atendimento</button>
-        </form>
+                    <div class="grupo-input">
+                        <label>Tipo de atendimento</label>
+                        <select id="tipo">
+                            <option value="" disabled selected>Selecione o tipo</option>
+                            <option value="Retido">Retido</option>
+                            <option value="Suporte">Suporte</option>
+                            <option value="Venda">Venda</option>
+                            <option value="Cancelado">Cancelado</option>
+                            <option value="Transferida">Transferida</option>
+                            <option value="Informações">Informações</option>
+                            <option value="Combo Multi">Combo Multi</option>
+                        </select>
+                    </div>
 
-        <!-- ESTATÍSTICAS -->
-        <h2>Estatísticas</h2>
-        <div class="estatisticas">
-            <p>Total de Atendimentos: <span id="totalAtendimentos">0</span></p>
-            <p>Total de Cancelamentos: <span id="totalCancelamentos">0</span></p>
-            <p>Taxa de Cancelamento: <span id="taxaCancelamento">0%</span></p>
+                    <div class="grupo-input">
+                        <label>Status do atendimento</label>
+                        <select id="status">
+                            <option value="" disabled selected>Selecione o status</option>
+                            <option>Informações do contrato</option>
+                            <option>Total</option>
+                            <option>Mudança de Pacote</option>
+                            <option>Mudança de Endereço</option>
+                            <option>Downgrade</option>
+                            <option>Upgrade</option>
+                            <option>Suspensão temporária</option>
+                            <option>Cancelamento MDE</option>
+                            <option>Agendamento de VT</option>
+                            <option>Venda Controle/ Pós Pago</option>
+                            <option>Transferida Supervisão</option>
+                            <option>Transferida Muda</option>
+                            <option>Ligar no 0800/*1052</option>
+                        </select>
+                    </div>
+
+                    <div class="grupo-input largura-total">
+                        <label>Observação rápida (opcional)</label>
+                        <div class="input-com-icone">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                            <input type="text" id="obs" placeholder="Digite uma observação...">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-salvar">
+                        <i class="fa-solid fa-plus"></i> Salvar Atendimento
+                    </button>
+                </form>
+            </div>
+
+            <!-- COLUNA DIREITA: ESTATÍSTICAS E ATENDIMENTOS SALVOS -->
+            <div class="coluna-estatisticas">
+                <div class="card-painel">
+                    <div class="card-titulo">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <h2>Estatísticas Gerais</h2>
+                    </div>
+
+                    <div class="grid-estatisticas">
+                        <div class="stat-card stat-azul">
+                            <div class="stat-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-valor" id="totalAtendimentos">0</span>
+                                <span class="stat-legenda">Total de Atendimentos</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-vermelho">
+                            <div class="stat-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-valor" id="totalCancelamentos">0</span>
+                                <span class="stat-legenda">Total de Cancelamentos</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card stat-verde">
+                            <div class="stat-icon"><i class="fa-solid fa-percent"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-valor" id="taxaCancelamento">0%</span>
+                                <span class="stat-legenda">Taxa de Cancelamento</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LEGENDA DE CORES -->
+                    <div class="legenda-cores-container">
+                        <span class="legenda-titulo-cores"><i class="fa-solid fa-palette"></i> Legenda de Cores:</span>
+                        <div class="legenda-itens">
+                            <div class="legenda-item"><span class="cor-bola" style="background: #3b82f6;"></span> Venda / Combo Multi</div>
+                            <div class="legenda-item"><span class="cor-bola" style="background: #eab308;"></span> Suporte / Informações</div>
+                            <div class="legenda-item"><span class="cor-bola" style="background: #10b981;"></span> Retido</div>
+                            <div class="legenda-item"><span class="cor-bola" style="background: #ef4444;"></span> Cancelado</div>
+                            <div class="legenda-item"><span class="cor-bola" style="background: #ec4899;"></span> Transferida</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LISTA DE ATENDIMENTOS SALVOS -->
+                <div class="card-painel" style="margin-top: 20px;">
+                    <div class="card-titulo">
+                        <i class="fa-solid fa-list-check"></i>
+                        <h2>Atendimentos Salvos</h2>
+                    </div>
+                    <div id="listaAtendimentos" class="lista-atendimentos-container"></div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- LISTA ONDE OS ATENDIMENTOS APARECEM (A Telinha) -->
-        <h2>Atendimentos Salvos</h2>
-        <div id="listaAtendimentos"></div>
+        <!-- BLOCO DE ANOTAÇÕES INFERIOR -->
+        <div class="card-painel bloco-notas-painel">
+            <div class="bloco-cabecalho-topo">
+                <div class="card-titulo" style="margin-bottom: 0;">
+                    <i class="fa-regular fa-note-sticky"></i>
+                    <div>
+                        <h2>Bloco de Anotações</h2>
+                        <p>Use este espaço para anotações importantes do dia.</p>
+                    </div>
+                </div>
+                <button class="btn-limpar" onclick="limparNotas()"><i class="fa-regular fa-trash-can"></i> Limpar</button>
+            </div>
 
-        <!-- BLOCO DE NOTAS LIVRE -->
-        <h2>Bloco de Anotações</h2>
-        <div id="blocoNotas" class="bloco-notas" contenteditable="true"></div>
+            <div class="toolbar-editor">
+                <button type="button" onclick="formatarTexto('bold')"><i class="fa-solid fa-bold"></i></button>
+                <button type="button" onclick="formatarTexto('italic')"><i class="fa-solid fa-italic"></i></button>
+                <button type="button" onclick="formatarTexto('underline')"><i class="fa-solid fa-underline"></i></button>
+                <span class="divisor-barra"></span>
+                <button type="button" onclick="formatarTexto('insertUnorderedList')"><i class="fa-solid fa-list-ul"></i></button>
+                <button type="button" onclick="formatarTexto('insertOrderedList')"><i class="fa-solid fa-list-ol"></i></button>
+                <button type="button" onclick="inserirLink()"><i class="fa-solid fa-link"></i></button>
+            </div>
 
-        <!-- LEGENDA DE CORES -->
-        <div class="legenda-container">
-            <span class="legenda-item"><span class="bola" style="background-color: #1976d2;"></span> Venda</span>
-            <span class="legenda-item"><span class="bola" style="background-color: #fbc02d;"></span> Suporte</span>
-            <span class="legenda-item"><span class="bola" style="background-color: #4CAF50;"></span> Retido</span>
-            <span class="legenda-item"><span class="bola" style="background-color: #F44336;"></span> Cancelado</span>
-            <span class="legenda-item"><span class="bola" style="background-color: #E91E63;"></span> Transferida</span>
+            <div id="blocoNotas" class="bloco-notas-conteudo" contenteditable="true" placeholder="Digite suas anotações aqui..."></div>
         </div>
 
         <!-- RODAPÉ -->
         <footer>
-            Desenvolvido por Nathan Rocha |
-            📞 <a href="tel:+5582993717863">(82) 99371-7863</a> |
-            📧 <a href="mailto:nathanxpon18y@gmail.com">nathanxpon18y@gmail.com</a>
+            <span>Desenvolvido por <strong>Nathan Rocha</strong></span>
+            <span><i class="fa-solid fa-phone"></i> (82) 99371-7863</span>
+            <span><i class="fa-regular fa-envelope"></i> nathanxpon18y@gmail.com</span>
         </footer>
 
     </div>
