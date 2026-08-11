@@ -3,17 +3,14 @@ body {
     background: #f5f5f5;
     margin: 0;
     padding: 0;
-    min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Permite rolar se o conteúdo for grande, mas centraliza no meio */
 }
 
 .container {
     width: 100%;
     max-width: 550px;
-    padding: 20px;
-    margin: 20px auto; /* Garante que fique centralizado horizontalmente */
+    padding: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,8 +19,6 @@ body {
 
 h1, h2 {
     color: #1976d2;
-    text-align: center;
-    width: 100%;
 }
 
 .formulario {
@@ -34,7 +29,6 @@ h1, h2 {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    box-sizing: border-box;
 }
 
 .formulario input,
@@ -42,8 +36,6 @@ h1, h2 {
 .formulario button {
     padding: 10px;
     font-size: 14px;
-    width: 100%;
-    box-sizing: border-box;
 }
 
 .formulario button {
@@ -60,8 +52,6 @@ h1, h2 {
     background: #e3f2fd;
     padding: 10px;
     border-radius: 8px;
-    text-align: center;
-    box-sizing: border-box;
 }
 
 .bloco-notas {
@@ -74,16 +64,15 @@ h1, h2 {
 .registro-bloco {
     background: #fff;
     margin-bottom: 10px;
-    padding: 12px;
+    padding: 10px;
     border-left: 6px solid #1976d2;
     border-radius: 6px;
+
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 6px;
     font-size: 13px;
     width: 100%;
-    text-align: left;
-    box-sizing: border-box;
 }
 
 /* ocupa duas colunas */
@@ -93,7 +82,7 @@ h1, h2 {
 
 /* cores */
 .tipo-venda { border-left-color: #1976d2; }
-.tipo-suporte { border-left-color: #fbc02d; }
+.tipo-suporte { border-left-color: #FFEB3B; }
 .tipo-retido { border-left-color: #4CAF50; }
 .tipo-cancelado { border-left-color: #F44336; }
 .tipo-transferida { border-left-color: #E91E63; }
@@ -118,11 +107,6 @@ h1, h2 {
     cursor: pointer;
 }
 
-.botao-acao .editar {
-    background-color: #03a9f4;
-    color: #fff;
-}
-
 .botao-acao .apagar {
     background-color: #F44336;
     color: #fff;
@@ -132,6 +116,4 @@ footer {
     margin-top: 30px;
     font-size: 13px;
     color: #555;
-    text-align: center;
-    width: 100%;
 }
