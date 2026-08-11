@@ -1,17 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    carregarTemaSalvo();
     carregarDados();
     carregarBlocoNotas();
 
-    // Evento de envio do formulário via classe
-    const form = document.querySelector('.formulario');
-    if (form) {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            salvarAtendimento();
-        });
-    }
-
-    // Salva o bloco de notas automaticamente ao digitar
     const blocoNotas = document.getElementById('blocoNotas');
     if (blocoNotas) {
         blocoNotas.addEventListener('input', () => {
@@ -20,6 +11,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+function alternarTema() {
+    const body = document.body;
+    const iconeTema = document.getElementById('iconeTema');
+
+    if (body.classList.contains('dark-mode')) {
+        body.classList.replace('dark-mode', 'light-mode');
+        iconeTema.classList.replace('fa-moon', 'fa-sun');
+        localStorage.setItem('temaSistema', 'light');
+    } else {
+        body.classList.replace('light-mode', 'dark-mode');
+        iconeTema.classList.replace('fa-sun', 'fa-moon');
+        localStorage.setItem('temaSistema', 'dark');
+    }
+}
+
+function carregarTemaSalvo() {
+    const temaSalvo = localStorage.getItem('temaSistema');
+    const body = document.body;
+    const iconeTema = document.getElementById('iconeTema');
+
+    if (temaSalvo === 'light') {
+        body.classList.replace('dark-mode', 'light-mode');
+        if (iconeTema) iconeTema.classList.replace('fa-moon', 'fa-sun');
+    } else {
+        body.classList.replace('light-mode', 'dark-mode');
+        if (iconeTema) iconeTema.classList.replace('fa-sun', 'fa-moon');
+    }
+}
+
+function formatarTexto(comando) {
+    document.execCommand(comando, false, null);
+}
+
+function inserirLink() {
+    const url = prompt('Digite a URL do link:');
+    if (url) {
+        document.execCommand('createLink', false, url);
+    }
+}
+
+function limparNotas() {
+    if (confirm('Deseja limpar todo o bloco de anotações?')) {
+        const blocoNotas = document.getElementById('blocoNotas');
+        blocoNotas.innerHTML = '';
+        localStorage.removeItem('blocoNotasTexto');
+    }
+}
+
 function salvarAtendimento() {
     const cliente = document.getElementById('cliente').value.trim();
     const contrato = document.getElementById('contrato').value.trim();
@@ -27,14 +66,13 @@ function salvarAtendimento() {
     const status = document.getElementById('status').value;
     const obs = document.getElementById('obs').value.trim();
 
-    if (!cliente || !contrato) {
-        alert('Por favor, preencha o nome do cliente e o contrato.');
+    if (!cliente || !contrato || !tipo || !status) {
+        alert('Por favor, preencha todos os campos obrigatórios.');
         return;
     }
 
     let atendimentos = JSON.parse(localStorage.getItem('atendimentos')) || [];
     
-    // Verifica se o formulário está em modo de edição
     const form = document.querySelector('.formulario');
     const editIndex = form.dataset.editIndex;
 
@@ -43,7 +81,7 @@ function salvarAtendimento() {
     if (editIndex !== undefined && editIndex !== '') {
         atendimentos[editIndex] = novoAtendimento;
         delete form.dataset.editIndex;
-        form.querySelector('button[type="submit"]').innerText = 'Salvar Atendimento';
+        form.querySelector('.btn-salvar').innerHTML = '<i class="fa-solid fa-plus"></i> Salvar Atendimento';
     } else {
         atendimentos.push(novoAtendimento);
     }
@@ -63,7 +101,6 @@ function carregarDados() {
     let cancelados = atendimentos.filter(a => a.tipo === 'Cancelado').length;
     let taxa = total > 0 ? ((cancelados / total) * 100).toFixed(2) : 0;
 
-    // Atualiza estatísticas na tela
     document.getElementById('totalAtendimentos').innerText = total;
     document.getElementById('totalCancelamentos').innerText = cancelados;
     document.getElementById('taxaCancelamento').innerText = taxa + '%';
@@ -73,31 +110,33 @@ function carregarDados() {
         return;
     }
 
-    // Mapeia classes de cores para a bordinha lateral do card
-    const classesTipo = {
-        'Venda': 'tipo-venda',
-        'Suporte': 'tipo-suporte',
-        'Retido': 'tipo-retido',
-        'Cancelado': 'tipo-cancelado',
-        'Transferida': 'tipo-transferida',
-        'Combo Multi': 'tipo-venda',
-        'Informações': 'tipo-suporte'
+    const coresTipos = {
+        'Venda': '#3b82f6',
+        'Suporte': '#eab308',
+        'Retido': '#10b981',
+        'Cancelado': '#ef4444',
+        'Transferida': '#ec4899',
+        'Combo Multi': '#3b82f6',
+        'Informações': '#eab308'
     };
 
     atendimentos.forEach((a, index) => {
-        const classeBorda = classesTipo[a.tipo] || 'tipo-venda';
+        const corBorda = coresTipos[a.tipo] || '#8b5cf6';
 
         lista.innerHTML += `
-            <div class="registro-bloco ${classeBorda}">
-                <div class="linha-completa atendimento-numero">Atendimento #${index + 1}</div>
-                <div><strong>Cliente:</strong> <span>${a.cliente}</span></div>
-                <div><strong>Contrato:</strong> <span>${a.contrato}</span></div>
-                <div><strong>Tipo:</strong> <span>${a.tipo}</span></div>
-                <div><strong>Status:</strong> <span>${a.status}</span></div>
-                ${a.obs ? `<div class="linha-completa"><strong>Obs:</strong> <span>${a.obs}</span></div>` : ''}
-                <div class="botao-acao">
-                    <button class="editar" type="button" onclick="editarAtendimento(${index})">Editar</button>
-                    <button class="apagar" type="button" onclick="apagarAtendimento(${index})">Apagar</button>
+            <div class="registro-card" style="border-left-color: ${corBorda};">
+                <div class="registro-topo">
+                    <span>#${index + 1} - ${a.cliente}</span>
+                    <span style="color: ${corBorda};">${a.tipo}</span>
+                </div>
+                <div class="registro-detalhes">
+                    <div>Contrato: <span>${a.contrato}</span></div>
+                    <div>Status: <span>${a.status}</span></div>
+                    ${a.obs ? `<div style="grid-column: span 2;">Obs: <span>${a.obs}</span></div>` : ''}
+                </div>
+                <div class="botoes-acao-card">
+                    <button type="button" onclick="editarAtendimento(${index})">Editar</button>
+                    <button type="button" class="apagar-btn" onclick="apagarAtendimento(${index})">Apagar</button>
                 </div>
             </div>
         `;
@@ -125,7 +164,7 @@ function editarAtendimento(index) {
 
     const form = document.querySelector('.formulario');
     form.dataset.editIndex = index;
-    form.querySelector('button[type="submit"]').innerText = 'Atualizar Atendimento';
+    form.querySelector('.btn-salvar').innerHTML = '<i class="fa-solid fa-rotate"></i> Atualizar Atendimento';
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -137,5 +176,3 @@ function carregarBlocoNotas() {
         blocoNotas.innerHTML = textoSalvo;
     }
 }
-
-
